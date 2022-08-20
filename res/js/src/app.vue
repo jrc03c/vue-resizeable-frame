@@ -7,9 +7,14 @@
 
 <template>
   <div class="app">
-    <v-frame>
-      <x-a></x-a>
-      <x-b></x-b>
+    <v-frame :slots="2">
+      <template v-slot:slot0>
+        <x-a></x-a>
+      </template>
+
+      <template v-slot:slot1>
+        <x-b></x-b>
+      </template>
     </v-frame>
   </div>
 </template>
