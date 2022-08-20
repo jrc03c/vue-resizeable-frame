@@ -25,8 +25,18 @@
 
   .frame-separator {
     height: 100%;
-    cursor: grab;
+    cursor: col-resize;
     background-color: black;
+  }
+
+  .frame-separator-grab-area {
+    background-color: rgba(255, 0, 0, 0.33);
+    width: 18px;
+    margin-left: -8px;
+    height: 100%;
+    cursor: col-resize;
+    z-index: 1;
+    transform: translateZ(1px);
   }
 </style>
 
@@ -38,6 +48,7 @@
       :class="{ 'frame-panel': i % 2 === 0, 'frame-separator': i % 2 !== 0 }"
       :style="`width: ${i % 2 === 0 ? 100 * innerWidths[i / 2] + '%' : '2px'}`">
       <slot v-if="i % 2 === 0" :name="'slot' + i / 2"></slot>
+      <div v-else class="frame-separator-grab-area"></div>
     </div>
   </div>
 </template>
