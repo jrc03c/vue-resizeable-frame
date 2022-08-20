@@ -20,7 +20,11 @@
 
 <template>
   <div class="frame">
-    <div v-for="i in range(0, slots)" :key="i" class="frame-panel">
+    <div
+      v-for="i in range(0, slots)"
+      :key="i"
+      class="frame-panel"
+      :style="`width: ${100 * innerWidths[i]}%;`">
       <slot :name="'slot' + i"></slot>
     </div>
   </div>
@@ -42,10 +46,48 @@
         required: true,
         default: 2,
       },
+
+      widths: {
+        type: Array,
+        required: false,
+        default: () => [],
+      },
+    },
+
+    data() {
+      return {
+        innerWidths: [],
+      }
+    },
+
+    watch: {
+      widths: {
+        deep: true,
+
+        handler() {
+          const self = this
+          self.onWidthsChange()
+        },
+      },
     },
 
     methods: {
       range,
+
+      onWidthsChange() {
+        const self = this
+
+        if (self.widths.length > 0) {
+          self.innerWidths = self.widths
+        } else {
+          self.innerWidths = range(0, self.slots).map(() => 1 / self.slots)
+        }
+      },
+    },
+
+    mounted() {
+      const self = this
+      self.onWidthsChange()
     },
   }
 </script>
