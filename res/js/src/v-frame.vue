@@ -12,20 +12,32 @@
     box-sizing: border-box;
   }
 
+  .frame-inner {
+    width: 100%;
+    height: 100%;
+    flex-shrink: 999999;
+  }
+
   .frame-panel {
     width: 100%;
     height: 100%;
+  }
+
+  .frame-separator {
+    height: 100%;
+    cursor: grab;
+    background-color: black;
   }
 </style>
 
 <template>
   <div class="frame">
     <div
-      v-for="i in range(0, slots)"
+      v-for="i in range(0, slots * 2 - 1)"
       :key="i"
-      class="frame-panel"
-      :style="`width: ${100 * innerWidths[i]}%;`">
-      <slot :name="'slot' + i"></slot>
+      :class="{ 'frame-panel': i % 2 === 0, 'frame-separator': i % 2 !== 0 }"
+      :style="`width: ${i % 2 === 0 ? 100 * innerWidths[i / 2] + '%' : '2px'}`">
+      <slot v-if="i % 2 === 0" :name="'slot' + i / 2"></slot>
     </div>
   </div>
 </template>
