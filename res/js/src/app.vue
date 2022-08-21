@@ -23,7 +23,7 @@
     <v-frame
       orientation="horizontal"
       :slots="4"
-      :sizes-as-percents="[0.1, 0.1, 0.1, 0.7]"
+      :sizes-as-percents="[0.25, 0.25, 0.25, 0.25]"
       :min-size-percent="0.05"
       :grab-size-pixels="24"
       :panel-styles="

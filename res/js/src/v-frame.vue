@@ -352,6 +352,13 @@
 
     mounted() {
       const self = this
+
+      if (self.sizesAsPercents.length > 0 && self.sizesAsPixels.length > 0) {
+        throw new VueResizeableFrameError(
+          "Only use one of the `sizes-as-percents` and `sizes-as-pixels` props!"
+        )
+      }
+
       self.onSizesChange()
       self.onPanelStylesChange()
 
