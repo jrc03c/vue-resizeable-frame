@@ -14,10 +14,10 @@
   <div class="app-horizontal">
     <v-frame
       :slots="4"
-      :widths-as-percents="[0.25, 0.25, 0.25, 0.25]"
-      :min-width-percent="0.1"
+      :sizes-as-percents="[0.25, 0.25, 0.25, 0.25]"
+      :min-size-percent="0.1"
       separator-styles="background-color: gray; width: 8px; left: -4px; border-radius: 4px;"
-      :grab-width-pixels="24">
+      :grab-size-pixels="24">
       <template v-slot:slot0>
         <x-a></x-a>
       </template>
@@ -42,10 +42,10 @@
     <v-frame
       orientation="vertical"
       :slots="4"
-      :widths-as-percents="[0.25, 0.25, 0.25, 0.25]"
-      :min-width-percent="0.1"
+      :sizes-as-percents="[0.25, 0.25, 0.25, 0.25]"
+      :min-size-percent="0.1"
       separator-styles="background-color: gray; height: 8px; top: -4px; border-radius: 4px;"
-      :grab-width-pixels="24">
+      :grab-size-pixels="24">
       <template v-slot:slot0>
         <x-a></x-a>
       </template>

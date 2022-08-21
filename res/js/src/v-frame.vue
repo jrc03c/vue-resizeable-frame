@@ -131,7 +131,7 @@
       :key="i"
       :class="{ 'frame-panel': i % 2 === 0, 'frame-separator': i % 2 !== 0 }"
       :style="`${orientation === 'vertical' ? 'height' : 'width'}: ${
-        i % 2 === 0 ? 100 * innerWidths[i / 2] + '%' : '0px'
+        i % 2 === 0 ? 100 * innerSizes[i / 2] + '%' : '0px'
       }`">
       <slot v-if="i % 2 === 0" :name="'slot' + i / 2"></slot>
 
@@ -144,9 +144,9 @@
           class="frame-separator-grab-area"
           :style="`${
             orientation === 'vertical' ? 'height' : 'width'
-          }: ${grabWidthPixels}px; ${
+          }: ${grabSizePixels}px; ${
             orientation === 'vertical' ? 'top' : 'left'
-          }: ${-grabWidthPixels / 2}px;`"
+          }: ${-grabSizePixels / 2}px;`"
           @mousedown="onMouseDown($event, (i - 1) / 2)"></div>
       </div>
     </div>
@@ -182,25 +182,25 @@
         default: 2,
       },
 
-      "widths-as-percents": {
+      "sizes-as-percents": {
         type: Array,
         required: false,
         default: () => [],
       },
 
-      "widths-as-pixels": {
+      "sizes-as-pixels": {
         type: Array,
         required: false,
         default: () => [],
       },
 
-      "min-width-percent": {
+      "min-size-percent": {
         type: Number,
         required: false,
         default: () => undefined,
       },
 
-      "min-width-pixels": {
+      "min-size-pixels": {
         type: Number,
         required: false,
         default: () => undefined,
@@ -212,7 +212,7 @@
         default: () => "",
       },
 
-      "grab-width-pixels": {
+      "grab-size-pixels": {
         type: Number,
         required: false,
         default: () => 24,
@@ -221,28 +221,28 @@
 
     data() {
       return {
-        innerWidths: [],
+        innerSizes: [],
         isResizing: false,
         resizingIndex: 0,
       }
     },
 
     watch: {
-      "widths-as-percents": {
+      "sizes-as-percents": {
         deep: true,
 
         handler() {
           const self = this
-          self.onWidthsChange()
+          self.onSizesChange()
         },
       },
 
-      "widths-as-pixels": {
+      "sizes-as-pixels": {
         deep: true,
 
         handler() {
           const self = this
-          self.onWidthsChange()
+          self.onSizesChange()
         },
       },
     },
@@ -250,17 +250,17 @@
     methods: {
       range,
 
-      onWidthsChange() {
+      onSizesChange() {
         const self = this
 
-        if (self.widthsAsPercents.length > 0) {
-          self.innerWidths = self.widthsAsPercents
-        } else if (self.widthsAsPixels.length > 0) {
+        if (self.sizesAsPercents.length > 0) {
+          self.innerSizes = self.sizesAsPercents
+        } else if (self.sizesAsPixels.length > 0) {
           const rect = self.$refs.frame.getBoundingClientRect()
           const dim = self.orientation === "vertical" ? rect.height : rect.width
-          self.innerWidths = self.widthsAsPixels.map(p => p / dim)
+          self.innerSizes = self.sizesAsPixels.map(p => p / dim)
         } else {
-          self.innerWidths = range(0, self.slots).map(() => 1 / self.slots)
+          self.innerSizes = range(0, self.slots).map(() => 1 / self.slots)
         }
       },
 
@@ -280,30 +280,28 @@
         const i = self.resizingIndex
         const rect = self.$refs.frame.getBoundingClientRect()
 
-        const fixed = self.innerWidths
-          .slice(i, i + 2)
-          .reduce((a, b) => a + b, 0)
+        const fixed = self.innerSizes.slice(i, i + 2).reduce((a, b) => a + b, 0)
 
         const movement =
           self.orientation === "vertical" ? event.movementY : event.movementX
         const dim = self.orientation === "vertical" ? rect.height : rect.width
         const delta = movement / dim
 
-        const minWidth =
-          typeof self.minWidthPercent !== "undefined"
-            ? parseFloat(self.minWidthPercent)
-            : typeof self.minWidthPixels !== "undefined"
-            ? parseFloat(self.minWidthPixels) / dim
+        const minSize =
+          typeof self.minSizePercent !== "undefined"
+            ? parseFloat(self.minSizePercent)
+            : typeof self.minSizePixels !== "undefined"
+            ? parseFloat(self.minSizePixels) / dim
             : 0.1
 
-        self.innerWidths[i] = clamp(
-          self.innerWidths[i] + delta,
-          minWidth,
-          fixed - minWidth
+        self.innerSizes[i] = clamp(
+          self.innerSizes[i] + delta,
+          minSize,
+          fixed - minSize
         )
 
-        if (i < self.innerWidths.length - 1) {
-          self.innerWidths[i + 1] = fixed - self.innerWidths[i]
+        if (i < self.innerSizes.length - 1) {
+          self.innerSizes[i + 1] = fixed - self.innerSizes[i]
         }
       },
 
@@ -319,7 +317,7 @@
 
     mounted() {
       const self = this
-      self.onWidthsChange()
+      self.onSizesChange()
     },
   }
 </script>
