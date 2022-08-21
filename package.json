@@ -1,5 +1,6 @@
 {
   "name": "vite",
+  "main": "res/js/src/v-frame.vue",
   "private": true,
   "version": "0.0.1",
   "type": "module",

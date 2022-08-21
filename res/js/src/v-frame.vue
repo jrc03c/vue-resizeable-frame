@@ -19,6 +19,8 @@
   .frame-panel {
     width: 100%;
     height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   .frame-inner {
@@ -30,10 +32,6 @@
   /* horizontal styles */
   .frame-horizontal {
     flex-direction: row;
-  }
-
-  .frame-horizontal .frame-panel {
-    overflow-x: hidden;
   }
 
   .frame-horizontal .frame-separator {
@@ -75,10 +73,6 @@
   /* vertical styles */
   .frame-vertical {
     flex-direction: column;
-  }
-
-  .frame-horizontal .frame-panel {
-    overflow-y: hidden;
   }
 
   .frame-vertical .frame-separator {
@@ -129,10 +123,13 @@
     <div
       v-for="i in range(0, slots * 2 - 1)"
       :key="i"
-      :class="{ 'frame-panel': i % 2 === 0, 'frame-separator': i % 2 !== 0 }"
+      :class="{
+        'frame-panel': i % 2 === 0,
+        'frame-separator': i % 2 !== 0,
+      }"
       :style="`${orientation === 'vertical' ? 'height' : 'width'}: ${
         i % 2 === 0 ? 100 * innerSizes[i / 2] + '%' : '0px'
-      }`">
+      }; ${innerPanelStyles[i / 2]}`">
       <slot v-if="i % 2 === 0" :name="'slot' + i / 2"></slot>
 
       <div v-else class="frame-separator-inner">
@@ -225,10 +222,16 @@
         required: false,
         default: () => 24,
       },
+
+      "panel-styles": {
+        required: false,
+        default: () => undefined,
+      },
     },
 
     data() {
       return {
+        innerPanelStyles: [],
         innerSizes: [],
         isResizing: false,
         resizingIndex: 0,
@@ -236,6 +239,11 @@
     },
 
     watch: {
+      ["panel-styles"]() {
+        const self = this
+        self.onPanelStylesChange()
+      },
+
       "sizes-as-percents": {
         deep: true,
 
@@ -257,6 +265,25 @@
 
     methods: {
       range,
+
+      onPanelStylesChange() {
+        const self = this
+
+        if (typeof self.panelStyles === "undefined") {
+          self.innerPanelStyles = range(0, self.slots).map(() => "")
+        }
+        if (typeof self.panelStyles === "string") {
+          self.innerPanelStyles = range(0, self.slots).map(
+            () => self.panelStyles
+          )
+        } else if (self.panelStyles instanceof Array) {
+          self.innerPanelStyles = self.panelStyles
+        } else {
+          throw new VueResizeableFrameError(
+            "The only valid kinds of values for the `panel-styles` prop are undefined, a CSS string, or an array of CSS strings."
+          )
+        }
+      },
 
       onSizesChange() {
         const self = this
@@ -326,6 +353,7 @@
     mounted() {
       const self = this
       self.onSizesChange()
+      self.onPanelStylesChange()
 
       assert(
         self.orientation === "horizontal" || self.orientation === "vertical",
