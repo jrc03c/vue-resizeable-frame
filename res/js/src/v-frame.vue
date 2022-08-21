@@ -85,10 +85,28 @@
         default: 2,
       },
 
-      widths: {
+      "widths-as-percents": {
         type: Array,
         required: false,
         default: () => [],
+      },
+
+      "widths-as-pixels": {
+        type: Array,
+        required: false,
+        default: () => [],
+      },
+
+      "min-width-percent": {
+        type: Number,
+        required: false,
+        default: () => undefined,
+      },
+
+      "min-width-pixels": {
+        type: Number,
+        required: false,
+        default: () => undefined,
       },
     },
 
@@ -101,7 +119,16 @@
     },
 
     watch: {
-      widths: {
+      "widths-as-percents": {
+        deep: true,
+
+        handler() {
+          const self = this
+          self.onWidthsChange()
+        },
+      },
+
+      "widths-as-pixels": {
         deep: true,
 
         handler() {
@@ -117,8 +144,11 @@
       onWidthsChange() {
         const self = this
 
-        if (self.widths.length > 0) {
-          self.innerWidths = self.widths
+        if (self.widthsAsPercents.length > 0) {
+          self.innerWidths = self.widthsAsPercents
+        } else if (self.widthsAsPixels.length > 0) {
+          const rect = self.$refs.frame.getBoundingClientRect()
+          self.innerWidths = self.widthsAsPixels.map(p => p / rect.width)
         } else {
           self.innerWidths = range(0, self.slots).map(() => 1 / self.slots)
         }
@@ -139,12 +169,19 @@
 
         const i = self.resizingIndex
         const rect = self.$refs.frame.getBoundingClientRect()
+
         const fixed = self.innerWidths
           .slice(i, i + 2)
           .reduce((a, b) => a + b, 0)
 
-        const minWidth = 128 / rect.width
         const delta = event.movementX / rect.width
+
+        const minWidth =
+          typeof self.minWidthPercent !== "undefined"
+            ? parseFloat(self.minWidthPercent)
+            : typeof self.minWidthPixels !== "undefined"
+            ? parseFloat(self.minWidthPixels) / rect.width
+            : 0.1
 
         self.innerWidths[i] = clamp(
           self.innerWidths[i] + delta,
