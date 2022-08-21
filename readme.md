@@ -46,14 +46,15 @@ In a template:
 
 # Props
 
-| Prop                    | Description                                                                                                                                                     |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`slots`**             | **(required)** the number of panels to create                                                                                                                   |
-| **`orientation`**       | "vertical" or "horizontal"                                                                                                                                      |
-| **`sizes-as-percents`** | an array of sizes for each panel as percents (between 0 and 1); is mutually exclusive with the `sizes-as-pixels` prop                                           |
-| **`sizes-as-pixels`**   | an array of sizes for each panel in pixels; is mutually exclusive with the `sizes-as-percents` prop                                                             |
-| **`min-size-percent`**  | the minimum size of a panel as a percent (between 0 and 1); is mutually exclusive with the `min-size-pixels` prop                                               |
-| **`min-size-pixels`**   | the minimum size of a panel in pixels; is mutually exclusive with the `min-size-percent` prop                                                                   |
-| **`grab-size-pixels`**  | the thickness of the panel separator (invisible) grab area; is not related to and has no effect on the visible portion of the separator                         |
-| **`separator-styles`**  | a CSS string of extra styles to be applied to the visible portion of each separator; is not related to and has no effect on the grabbable area of the separator |
-| **`panel-styles`**      | a CSS string or array of CSS strings to be applied to the panels                                                                                                |
+<!-- prettier-ignore -->
+| Prop | Required? | Description |
+|------|-----------|-------------|
+| **`slots`** | **yes** | the number of panels to create |
+| **`orientation`** | no | "vertical" or "horizontal" |
+| **`sizes-as-percents`** | no | an array of sizes for each panel as percents (between 0 and 1); is mutually exclusive with the `sizes-as-pixels` prop |
+| **`sizes-as-pixels`** | no | an array of sizes for each panel in pixels; is mutually exclusive with the `sizes-as-percents` prop |
+| **`min-size-percent`** | no | the minimum size of a panel as a percent (between 0 and 1); is mutually exclusive with the `min-size-pixels` prop |
+| **`min-size-pixels`** | no | the minimum size of a panel in pixels; is mutually exclusive with the `min-size-percent` prop |
+| **`grab-size-pixels`** | no | the thickness of the panel separator (invisible) grab area; is not related to and has no effect on the visible portion of the separator |
+| **`separator-styles`** | no | a CSS string of extra styles to be applied to the visible portion of each separator; is not related to and has no effect on the grabbable area of the separator |
+| **`panel-styles`** | no | a CSS string or array of CSS strings to be applied to the panels |
