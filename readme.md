@@ -46,7 +46,7 @@ In a template:
 
 # Props
 
-**`slots`** = <span style="color: red; font-weight: bold;">(required)</span> the number of panels to create
+**`slots`** = _(required)_ the number of panels to create
 
 **`orientation`** = "vertical" or "horizontal"
 
