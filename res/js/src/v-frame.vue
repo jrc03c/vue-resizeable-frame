@@ -30,18 +30,40 @@
 
   .frame-separator {
     height: 100%;
-    cursor: col-resize;
+    width: 0px;
+    z-index: 1;
+    transform: translateZ(1px);
+  }
+
+  .frame-separator-inner {
+    height: 100%;
+    width: 0;
+    z-index: 2;
+    transform: translateZ(2px);
+    position: relative;
+  }
+
+  .frame-separator-visible-area {
+    width: 4px;
+    height: 100%;
     background-color: black;
+    position: absolute;
+    top: 0;
+    left: -2px;
+    z-index: 3;
+    transform: translateZ(3px);
   }
 
   .frame-separator-grab-area {
-    background-color: rgba(255, 0, 0, 0.33);
-    width: 18px;
-    margin-left: -9px;
+    opacity: 0;
+    width: 20px;
+    position: absolute;
+    top: 0;
+    left: -10px;
     height: 100%;
     cursor: col-resize;
-    z-index: 1;
-    transform: translateZ(1px);
+    z-index: 4;
+    transform: translateZ(4px);
   }
 </style>
 
@@ -54,10 +76,13 @@
       :style="`width: ${i % 2 === 0 ? 100 * innerWidths[i / 2] + '%' : '0px'}`">
       <slot v-if="i % 2 === 0" :name="'slot' + i / 2"></slot>
 
-      <div
-        v-else
-        class="frame-separator-grab-area"
-        @mousedown="onMouseDown($event, (i - 1) / 2)"></div>
+      <div v-else class="frame-separator-inner">
+        <div class="frame-separator-visible-area"></div>
+
+        <div
+          class="frame-separator-grab-area"
+          @mousedown="onMouseDown($event, (i - 1) / 2)"></div>
+      </div>
     </div>
   </div>
 </template>

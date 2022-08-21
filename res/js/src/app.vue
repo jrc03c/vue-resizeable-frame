@@ -9,8 +9,8 @@
   <div class="app">
     <v-frame
       :slots="4"
-      :widths-as-pixels="[32, 32, 32, 928]"
-      :min-width-pixels="32">
+      :widths-as-percents="[0.25, 0.25, 0.25, 0.25]"
+      :min-width-percent="0.1">
       <template v-slot:slot0>
         <x-a></x-a>
       </template>
