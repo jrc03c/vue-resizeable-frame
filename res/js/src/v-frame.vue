@@ -44,22 +44,20 @@
   }
 
   .frame-separator-visible-area {
-    width: 4px;
+    width: 2px;
     height: 100%;
     background-color: black;
     position: absolute;
     top: 0;
-    left: -2px;
+    left: -1px;
     z-index: 3;
     transform: translateZ(3px);
   }
 
   .frame-separator-grab-area {
     opacity: 0;
-    width: 20px;
     position: absolute;
     top: 0;
-    left: -10px;
     height: 100%;
     cursor: col-resize;
     z-index: 4;
@@ -83,6 +81,9 @@
 
         <div
           class="frame-separator-grab-area"
+          :style="`width: ${grabWidthPixels}px; left: ${
+            -grabWidthPixels / 2
+          }px;`"
           @mousedown="onMouseDown($event, (i - 1) / 2)"></div>
       </div>
     </div>
@@ -140,6 +141,12 @@
         type: String,
         required: false,
         default: () => "",
+      },
+
+      "grab-width-pixels": {
+        type: Number,
+        required: false,
+        default: () => 24,
       },
     },
 
