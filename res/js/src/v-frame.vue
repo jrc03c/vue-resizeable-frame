@@ -139,24 +139,22 @@
 
         const i = self.resizingIndex
         const rect = self.$refs.frame.getBoundingClientRect()
-        const fixed = self.innerWidths[i] + self.innerWidths[i + 1]
+        const fixed = self.innerWidths
+          .slice(i, i + 2)
+          .reduce((a, b) => a + b, 0)
 
-        const left =
-          i > 0
-            ? self.innerWidths.slice(0, i - 1).reduce((a, b) => a + b, 0)
-            : 0
-
-        const right = left + fixed
         const minWidth = 128 / rect.width
         const delta = event.movementX / rect.width
 
         self.innerWidths[i] = clamp(
           self.innerWidths[i] + delta,
-          left + minWidth,
-          right - minWidth
+          minWidth,
+          fixed - minWidth
         )
 
-        self.innerWidths[i + 1] = fixed - self.innerWidths[i]
+        if (i < self.innerWidths.length - 1) {
+          self.innerWidths[i + 1] = fixed - self.innerWidths[i]
+        }
       },
 
       onMouseUp() {
