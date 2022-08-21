@@ -166,6 +166,14 @@
     return x
   }
 
+  class VueResizeableFrameError extends Error {}
+
+  function assert(condition, message) {
+    if (!condition) {
+      throw new VueResizeableFrameError(message)
+    }
+  }
+
   export default {
     name: "v-frame",
 
@@ -318,6 +326,30 @@
     mounted() {
       const self = this
       self.onSizesChange()
+
+      assert(
+        self.orientation === "horizontal" || self.orientation === "vertical",
+        "The only two valid values for the `orientation` prop are 'vertical' and 'horizontal'!"
+      )
+
+      assert(
+        self.slots === self.innerSizes.length,
+        "The number passed into the `slots` prop must match the number of values passed into the `sizes-as-percents` and/or the `sizes-as-pixels` props!"
+      )
+
+      assert(
+        self.innerSizes.reduce((a, b) => a + b, 0) <= 1,
+        "If providing default sizes as props, then the sizes cannot sum up to more than the width of the container element!"
+      )
+
+      if (
+        typeof self.minSizePercent !== "undefined" &&
+        typeof self.minSizePixels !== "undefined"
+      ) {
+        throw new VueResizeableFrameError(
+          "Only use one of the `min-size-percent` and `min-size-pixels` props!"
+        )
+      }
     },
   }
 </script>
