@@ -1,4 +1,5 @@
 <style scoped>
+  /* common styles */
   .user-select-none,
   .user-select-none * {
     user-select: none !important;
@@ -6,7 +7,6 @@
 
   .frame {
     display: flex;
-    flex-direction: row;
     flex-wrap: nowrap;
     justify-content: flex-start;
     align-content: flex-start;
@@ -16,26 +16,34 @@
     box-sizing: border-box;
   }
 
+  .frame-panel {
+    width: 100%;
+    height: 100%;
+  }
+
   .frame-inner {
     width: 100%;
     height: 100%;
     flex-shrink: 999999;
   }
 
-  .frame-panel {
-    width: 100%;
-    height: 100%;
+  /* horizontal styles */
+  .frame-horizontal {
+    flex-direction: row;
+  }
+
+  .frame-horizontal .frame-panel {
     overflow-x: hidden;
   }
 
-  .frame-separator {
+  .frame-horizontal .frame-separator {
     height: 100%;
     width: 0px;
     z-index: 1;
     transform: translateZ(1px);
   }
 
-  .frame-separator-inner {
+  .frame-horizontal .frame-separator-inner {
     height: 100%;
     width: 0;
     z-index: 2;
@@ -43,7 +51,7 @@
     position: relative;
   }
 
-  .frame-separator-visible-area {
+  .frame-horizontal .frame-separator-visible-area {
     width: 2px;
     height: 100%;
     background-color: black;
@@ -54,7 +62,7 @@
     transform: translateZ(3px);
   }
 
-  .frame-separator-grab-area {
+  .frame-horizontal .frame-separator-grab-area {
     opacity: 0;
     position: absolute;
     top: 0;
@@ -63,15 +71,68 @@
     z-index: 4;
     transform: translateZ(4px);
   }
+
+  /* vertical styles */
+  .frame-vertical {
+    flex-direction: column;
+  }
+
+  .frame-horizontal .frame-panel {
+    overflow-y: hidden;
+  }
+
+  .frame-vertical .frame-separator {
+    height: 0;
+    width: 100%;
+    z-index: 1;
+    transform: translateZ(1px);
+  }
+
+  .frame-vertical .frame-separator-inner {
+    height: 0;
+    width: 100%;
+    z-index: 2;
+    transform: translateZ(2px);
+    position: relative;
+  }
+
+  .frame-vertical .frame-separator-visible-area {
+    width: 100%;
+    height: 2px;
+    background-color: black;
+    position: absolute;
+    top: -1px;
+    left: 0;
+    z-index: 3;
+    transform: translateZ(3px);
+  }
+
+  .frame-vertical .frame-separator-grab-area {
+    opacity: 0;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    cursor: row-resize;
+    z-index: 4;
+    transform: translateZ(4px);
+  }
 </style>
 
 <template>
-  <div ref="frame" class="frame">
+  <div
+    ref="frame"
+    class="frame"
+    :class="{
+      'frame-horizontal': orientation === 'horizontal',
+      'frame-vertical': orientation === 'vertical',
+    }">
     <div
       v-for="i in range(0, slots * 2 - 1)"
       :key="i"
       :class="{ 'frame-panel': i % 2 === 0, 'frame-separator': i % 2 !== 0 }"
-      :style="`width: ${i % 2 === 0 ? 100 * innerWidths[i / 2] + '%' : '0px'}`">
+      :style="`${orientation === 'vertical' ? 'height' : 'width'}: ${
+        i % 2 === 0 ? 100 * innerWidths[i / 2] + '%' : '0px'
+      }`">
       <slot v-if="i % 2 === 0" :name="'slot' + i / 2"></slot>
 
       <div v-else class="frame-separator-inner">
@@ -81,9 +142,11 @@
 
         <div
           class="frame-separator-grab-area"
-          :style="`width: ${grabWidthPixels}px; left: ${
-            -grabWidthPixels / 2
-          }px;`"
+          :style="`${
+            orientation === 'vertical' ? 'height' : 'width'
+          }: ${grabWidthPixels}px; ${
+            orientation === 'vertical' ? 'top' : 'left'
+          }: ${-grabWidthPixels / 2}px;`"
           @mousedown="onMouseDown($event, (i - 1) / 2)"></div>
       </div>
     </div>
@@ -107,6 +170,12 @@
     name: "v-frame",
 
     props: {
+      orientation: {
+        type: String,
+        required: false,
+        default: () => "horizontal",
+      },
+
       slots: {
         type: Number,
         required: true,
@@ -188,7 +257,8 @@
           self.innerWidths = self.widthsAsPercents
         } else if (self.widthsAsPixels.length > 0) {
           const rect = self.$refs.frame.getBoundingClientRect()
-          self.innerWidths = self.widthsAsPixels.map(p => p / rect.width)
+          const dim = self.orientation === "vertical" ? rect.height : rect.width
+          self.innerWidths = self.widthsAsPixels.map(p => p / dim)
         } else {
           self.innerWidths = range(0, self.slots).map(() => 1 / self.slots)
         }
@@ -214,13 +284,16 @@
           .slice(i, i + 2)
           .reduce((a, b) => a + b, 0)
 
-        const delta = event.movementX / rect.width
+        const movement =
+          self.orientation === "vertical" ? event.movementY : event.movementX
+        const dim = self.orientation === "vertical" ? rect.height : rect.width
+        const delta = movement / dim
 
         const minWidth =
           typeof self.minWidthPercent !== "undefined"
             ? parseFloat(self.minWidthPercent)
             : typeof self.minWidthPixels !== "undefined"
-            ? parseFloat(self.minWidthPixels) / rect.width
+            ? parseFloat(self.minWidthPixels) / dim
             : 0.1
 
         self.innerWidths[i] = clamp(
