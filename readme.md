@@ -28,6 +28,7 @@ app.mount("...")
 
 In a template:
 
+<!-- prettier-ignore -->
 ```html
 <template>
   <vue-resizeable-frame
@@ -38,7 +39,9 @@ In a template:
     separator-styles="background-color: red; width: 8px; left: -4px;"
     :grab-size-pixels="24"
     panel-styles="background-color: blue;">
+
     <template v-slot:slot0>This is the first panel!</template>
+
     <template v-slot:slot1>This is the second panel!</template>
   </vue-resizeable-frame>
 </template>
