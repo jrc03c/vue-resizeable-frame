@@ -10,7 +10,8 @@
     <v-frame
       :slots="4"
       :widths-as-percents="[0.25, 0.25, 0.25, 0.25]"
-      :min-width-percent="0.1">
+      :min-width-percent="0.1"
+      separator-styles="background-color: gray; width: 8px; left: -4px; border-radius: 4px;">
       <template v-slot:slot0>
         <x-a></x-a>
       </template>

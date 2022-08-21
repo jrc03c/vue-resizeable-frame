@@ -77,7 +77,9 @@
       <slot v-if="i % 2 === 0" :name="'slot' + i / 2"></slot>
 
       <div v-else class="frame-separator-inner">
-        <div class="frame-separator-visible-area"></div>
+        <div
+          class="frame-separator-visible-area"
+          :style="separatorStyles"></div>
 
         <div
           class="frame-separator-grab-area"
@@ -132,6 +134,12 @@
         type: Number,
         required: false,
         default: () => undefined,
+      },
+
+      "separator-styles": {
+        type: String,
+        required: false,
+        default: () => "",
       },
     },
 
